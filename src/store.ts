@@ -1,5 +1,6 @@
-import { BehaviorSubject, Observable } from "rxjs";
-import { scan, shareReplay } from "rxjs/operators";
+import { BehaviorSubject, Observable, Subject, merge } from "rxjs";
+import { flatMap, map, scan, shareReplay } from "rxjs/operators";
+import { ajax } from "rxjs/ajax";
 
 const _count = new BehaviorSubject<number>(0);
 export const count: Observable<number> = _count.pipe(
@@ -8,3 +9,13 @@ export const count: Observable<number> = _count.pipe(
 );
 export const increment = () => _count.next(1);
 export const decrement = () => _count.next(-1);
+
+const _uuid = new Subject();
+export const uuid = merge(
+  _uuid,
+  _uuid.pipe(
+    flatMap(() => ajax.getJSON<{ uuid: string }>("https://httpbin.org/uuid")),
+    map(x => x.uuid)
+  )
+).pipe(shareReplay());
+export const getUUID = () => _uuid.next();
