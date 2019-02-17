@@ -1,9 +1,9 @@
-import { BehaviorSubject, Observable, Subject, merge } from "rxjs";
+import { BehaviorSubject, Subject, merge } from "rxjs";
 import { flatMap, map, scan, shareReplay } from "rxjs/operators";
 import { ajax } from "rxjs/ajax";
 
 const _count = new BehaviorSubject<number>(0);
-export const count: Observable<number> = _count.pipe(
+export const count = _count.pipe(
   scan((acc, value) => acc + value),
   shareReplay()
 );
